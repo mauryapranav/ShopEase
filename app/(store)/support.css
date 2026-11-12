@@ -199,3 +199,28 @@
 }
 
 .ticket-heading .order-link { display:inline-block; margin-bottom:12px; font-size:14px; }
+
+.support-home .support-chat { background:#ffffffb8; border:1px solid #ffffff; border-radius:18px; box-shadow:0 16px 40px #29436514; }
+.support-home .chat-header { background:linear-gradient(110deg,#203454,#315572); padding:18px 24px; }
+.support-home .chat-header h2 { font-weight:600; }
+.support-home .chat-header p { color:#d2e4f1; }
+.chat-viewport { background:linear-gradient(140deg,#ffffffb8,#f3f7fcbe); }
+.chat-welcome { padding:8px 0; }
+.chat-welcome h2 { max-width:480px; }
+.chat-action { position:relative; background:#ffffffbf; border:1px solid #d4e0ef; border-radius:11px; padding:18px 16px; box-shadow:0 3px 10px #29436505; }
+.chat-action:hover { background:#edf3ff; border-color:#9fb6e5; box-shadow:0 4px 14px #3153c70d; }
+.chat-action:active { background:#e0e9fc; }
+.action-track { border-left:3px solid #5379c6; }
+.action-return { border-left:3px solid #4b8c87; }
+.action-cancel { border-left:3px solid #8579ad; }
+.action-human { border-left:3px solid #708baf; }
+.support-home .chat-composer { background:#ffffffcc; padding:16px; }
+.support-home .chat-composer input { border-color:#cedbee; border-radius:9px; background:white; }
+.support-home .chat-composer button { background:linear-gradient(130deg,#4268db,#2f4ab2); box-shadow:0 4px 10px #3153c723; }
+.support-home .order-shortcut-panel,.support-home .tickets-section,.support-home .shop-shortcut { background:#ffffffad; border:1px solid #ffffff; border-radius:14px; box-shadow:0 8px 26px #29436508; }
+.support-home .order-shortcut-panel { border-top:3px solid #749cba; }
+.support-home .tickets-section { border-top:3px solid #6c9992; }
+.support-home .shop-shortcut { background:linear-gradient(115deg,#ffffffb5,#e2ebfbad); }
+.support-home .ticket-card { background:transparent; }
+.support-home .assistant-bubble { background:#f0f4fa; border-color:#d9e2f0; }
+@media(max-width:550px) { .support-home .chat-header { padding:14px 16px; } .chat-action { padding:10px 12px; margin:3px 0; border-width:1px 1px 1px 3px; border-radius:7px; } .support-home .chat-composer { padding:12px; } }

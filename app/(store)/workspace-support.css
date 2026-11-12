@@ -1,0 +1,41 @@
+
+.support-title { margin-bottom:24px; }
+.support-title p { max-width:620px; line-height:1.6; font-size:13px; }
+.support-workspace { grid-template-columns:minmax(0,1fr) 285px; gap:22px; }
+.support-home .support-chat { height:clamp(420px,calc(100dvh - 250px),740px); border:1px solid #d5dfea; border-radius:13px; box-shadow:0 9px 30px #2d45660a; background:white; }
+.support-home .chat-header { background:white; color:var(--ink); padding:19px 24px; border-bottom:1px solid var(--line); }
+.support-home .chat-header h2 { font-size:14px; }
+.support-home .chat-header p { font-size:11px; color:#566b88; border:1px solid #dce5f1; border-radius:5px; padding:4px 8px; }
+.chat-viewport { background:radial-gradient(ellipse at 0 0,#edf2fb 0,transparent 70%),#fff; }
+.chat-welcome { margin:12px auto; max-width:560px; }
+.conversation-mark { display:grid; place-items:center; width:44px; height:44px; margin-bottom:20px; color:#fff; background:linear-gradient(140deg,#3458bb,#566d9b); border-radius:12px; font-size:20px; font-weight:650; letter-spacing:-.09em; box-shadow:0 5px 14px #3458bb20; }
+.chat-welcome h2 { font-size:clamp(24px,2.5vw,32px); max-width:430px; }
+.chat-welcome>p { max-width:430px; line-height:1.6; font-size:13px; }
+.chat-actions { gap:10px; }
+.chat-action { background:#ffffffda; border:1px solid #d9e2ee; border-radius:8px; padding:16px; box-shadow:0 3px 8px #2d456603; }
+.chat-action strong { font-size:13px; }
+.chat-action small { font-size:11px; margin-top:4px; }
+.chat-action:hover { background:#f1f5fd; border-color:#a2b7de; }
+.support-home .chat-composer { background:white; padding:16px; }
+.support-home .chat-composer input { background:#f7f9fc; border-color:#d4dfed; min-height:46px; border-radius:8px; }
+.support-home .chat-composer button { background:var(--accent); border-radius:8px; }
+.support-home .tickets-section,.support-home .shop-shortcut,.recent-orders { background:#ffffffb8; border:1px solid #d9e2ee; border-radius:11px; box-shadow:0 5px 18px #29436504; padding:20px; }
+.support-home .tickets-section { margin:0; }
+.support-home .ticket-card { background:transparent; padding:12px 0 0; margin:0; border-radius:0; }
+.support-home .ticket-card p { font-size:12px; line-height:1.5; }
+.support-sidebar h2,.support-home .ticket-heading h2 { font-size:14px; margin:0 0 14px; }
+.panel-title { display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+.panel-title a { font-size:11px; color:var(--accent); white-space:nowrap; }
+.recent-order { display:block; padding:14px 0; border-top:1px solid var(--line); }
+.recent-order>div { display:flex; justify-content:space-between; align-items:center; gap:6px; }
+.recent-order strong { font-size:13px; }
+.recent-order .status-badge { margin:0; font-size:9px; padding:3px 5px; }
+.recent-order p { font-size:12px; line-height:1.55; color:var(--muted); margin:9px 0; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.recent-order small { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); }
+.recent-order small span { color:var(--accent); }
+.recent-order:hover strong { text-decoration:underline; color:var(--accent); }
+.support-home .shop-shortcut { background:linear-gradient(115deg,#e6edf9,#f6f8fc); font-size:12px; }
+@media(max-width:1200px) { .support-workspace { grid-template-columns:minmax(0,1fr) 250px; gap:16px; } .chat-actions { grid-template-columns:1fr; } .chat-action { padding:11px 14px; } .chat-welcome>p { margin-bottom:16px; } }
+@media(max-width:1000px) { .support-workspace { grid-template-columns:1fr; } .support-sidebar { grid-template-columns:1fr 1fr; } .support-home .shop-shortcut { grid-column:1/-1; } .chat-actions { grid-template-columns:1fr 1fr; } }
+@media(max-width:550px) { .support-home .support-chat { height:clamp(410px,calc(100dvh - 280px),650px); } .chat-actions { grid-template-columns:1fr; gap:8px; } .chat-action { border-width:1px; padding:12px; } .chat-action small { display:none; } .chat-welcome { margin:0; } .conversation-mark { width:36px; height:36px; margin-bottom:14px; font-size:17px; } .support-home .chat-header { padding:14px 16px; } .support-sidebar { grid-template-columns:1fr; } .support-home .chat-composer { padding:12px; } }
+

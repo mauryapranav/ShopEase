@@ -1,0 +1,37 @@
+:root { --paper:#f3f5f8; --ink:#1b2940; --accent:#355ac7; --green:#355ac7; --line:#dce3ed; --muted:#56667b; }
+body { background:var(--paper); }
+.store-header { background:#ffffffed; border-bottom:1px solid var(--line); color:var(--ink); }
+.header-inner { max-width:1600px; padding:18px 28px; }
+.workspace-shell { display:grid; grid-template-columns:200px minmax(0,1fr); max-width:1600px; margin:auto; min-height:calc(100dvh - 145px); }
+.workspace-nav { background:#1c2b42; color:white; padding:34px 18px; display:flex; flex-direction:column; }
+.nav-caption { font-size:11px; color:#a9b8cf; letter-spacing:.06em; margin:0 14px 22px; }
+.store-nav { display:flex; flex-direction:column; gap:7px; margin:0; padding:0; border:0; }
+.store-nav a { border:1px solid transparent; border-radius:8px; padding:13px 14px; color:#c8d2e2; font-size:13px; }
+.store-nav a:hover { background:#ffffff0b; color:white; }
+.store-nav a[aria-current] { background:#ffffff12; color:white; border-color:#ffffff16; box-shadow:inset 3px 0 #8ba8ff; }
+.nav-help { font-size:12px; color:#a9b8cf; margin-top:auto; padding:30px 14px 8px; line-height:1.7; }
+.nav-help strong { display:block; font-weight:500; color:#e1e9f8; }
+.store-main { width:100%; max-width:none; min-width:0; padding:32px clamp(20px,3vw,44px) 40px; background:radial-gradient(ellipse at 100% 0,#e4eaf7,transparent 62%),var(--paper); }
+.page-heading { margin:0 0 28px; border:0; padding:0; }
+.support-title h1,.page-heading h1 { font-size:clamp(30px,3vw,40px); letter-spacing:-.045em; font-weight:620; }
+.detail-panel,.account-record,.empty-record,.ticket-record,.product-card { background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 4px 16px #223a5c04; }
+.account-record { padding:24px 28px; border-left:3px solid #8c9fba; }
+.account-record h2 { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; }
+.account-record h2 .order-link { text-decoration:none; font-size:20px; color:var(--ink); }
+.account-record ul { background:#f6f8fb; border:0; border-radius:6px; padding:14px 18px; line-height:1.9; }
+.empty-record { min-height:180px; display:flex; flex-direction:column; justify-content:center; align-items:flex-start; gap:8px; padding:32px; }
+.empty-record h2 { font-size:23px; }
+.primary,.product-bottom button { background:var(--accent); box-shadow:0 3px 8px #355ac71a; border-radius:7px; }
+.primary:hover,.product-bottom button:hover { background:#2948a6; }
+.categories button { background:#fff; border-radius:7px; }
+.shop-hero { background:linear-gradient(115deg,#20324b,#3a5868); border-radius:14px; }
+.shop-hero>div { padding:32px; }
+.shop-hero h1 { font-size:clamp(34px,3.6vw,48px); }
+.shop-hero img { max-height:300px; }
+.status-badge { color:#355477; background:#edf2fa; border-color:#d8e2f1; border-radius:5px; }
+.ticket-desk .detail-panel { border-top:3px solid #7a92c7; }
+footer { background:#eef1f5; padding:18px; }
+@media(max-width:1100px) { .workspace-shell { grid-template-columns:175px minmax(0,1fr); } .workspace-nav { padding-inline:12px; } .store-main { padding:26px 22px; } .product-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media(max-width:850px) { .workspace-shell { display:block; } .workspace-nav { padding:10px 16px; } .nav-caption,.nav-help { display:none; } .store-nav { flex-direction:row; overflow-x:auto; gap:4px; margin:0; } .store-nav a { padding:10px 13px; } .store-nav a[aria-current] { box-shadow:inset 0 -2px #8ba8ff; } .store-main { padding:24px 16px 35px; } }
+@media(max-width:650px) { .header-inner { padding:14px 16px; } .workspace-nav { padding:8px; } .store-nav a { font-size:12px; padding:9px 11px; } .product-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .account-record { padding:20px; } }
+

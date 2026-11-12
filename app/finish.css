@@ -1,0 +1,38 @@
+/* Translucency stays on static panels to keep scrolling and chat inexpensive. */
+:root { --paper: #edf2f8; --ink: #17263c; --accent: #3153c7; --green: #3153c7; --line: #ccd6e6; --muted: #4c6077; }
+body { background: radial-gradient(ellipse at 3% 12%, #d0ddf7 0, transparent 47%), radial-gradient(ellipse at 96% 48%, #d0e8e4 0, transparent 45%), #edf2f8; min-height:100dvh; }
+.store-header { background: #ffffffbc; color:var(--ink); border-bottom:1px solid #ffffff; box-shadow:0 3px 24px #243b6408; -webkit-backdrop-filter:blur(18px); backdrop-filter:blur(18px); }
+.header-inner { padding-block:21px; }
+.store-header .account button { color:var(--muted); }
+.brand span { color:#3153c7; }
+.store-nav { gap:8px; padding:12px 0; border-bottom:0; margin-bottom:20px; }
+.store-nav a { border:1px solid transparent; border-radius:8px; padding:10px 16px; }
+.store-nav a:hover { background:#ffffff9c; }
+.store-nav a[aria-current] { background:#ffffffd9; border-color:#ffffff; box-shadow:0 3px 12px #3048790b; color:var(--accent); }
+.page-heading { border:0; }
+.support-title h1,.page-heading h1 { letter-spacing:-.045em; }
+.detail-panel,.account-record,.empty-record,.ticket-record,.product-card { background:#ffffffcf; border:1px solid #ffffff; border-radius:15px; box-shadow:0 9px 28px #273f6008,inset 0 1px #ffffff; }
+.account-record { position:relative; border-left:3px solid #6486cc; }
+.detail-panel { padding:26px; }
+.primary,.product-bottom button { background:linear-gradient(130deg,#4268db,#2f4ab2); box-shadow:0 4px 10px #3153c723; border-radius:8px; }
+.primary:hover,.product-bottom button:hover { background:#2846ab; box-shadow:0 5px 15px #3153c738; }
+.primary:active,.product-bottom button:active { transform:translateY(1px); }
+.product-card { overflow:hidden; }
+.product-photo { background:#e4eaf0; }
+.product-photo img { transition:transform .2s ease; }
+@media(hover:hover) { .product-card:hover .product-photo img { transform:scale(1.025); } }
+.categories button { background:#ffffffa8; border-color:#ffffff; border-radius:8px; }
+.shop-hero { border:1px solid #ffffff8c; border-radius:17px; box-shadow:0 16px 36px #273f6014; background:linear-gradient(125deg,#182c47,#2c5267); }
+.status-badge { color:#2c5472; background:#e6eff7; border-color:#d0dfed; border-radius:6px; }
+.ticket-record[open] { border-color:#9eb5df; }
+.ticket-record summary:hover { background:#f4f7fc; border-radius:14px; }
+.ticket-thread { background:#ffffffad; border-radius:0 0 14px 14px; }
+.ticket-controls button { background:#f4f7fc; border-radius:6px; }
+.login-layout { background:transparent; padding:24px; gap:24px; }
+.login-story { min-height:calc(100dvh - 48px); border-radius:22px; background:radial-gradient(ellipse at 95% 5%,#527c94,transparent 70%),linear-gradient(145deg,#18283e,#274558); box-shadow:0 16px 40px #1a32451c; }
+.login-story .brand span { color:#a4c5ff; }
+.login-form { background:#ffffffab; border:1px solid #ffffff; border-radius:22px; box-shadow:0 12px 40px #273f600a; }
+.login-form input,.login-form select,.ticket-desk textarea { background:#ffffffdb; border-color:#cbd7e8; border-radius:8px; }
+footer { background:#ffffff40; border-top:1px solid #ffffff80; }
+@media(max-width:650px) { .header-inner { padding-block:14px; } .store-nav { gap:2px; } .store-nav a { padding:9px 10px; } .login-layout { padding:12px; gap:12px; } .login-story { min-height:auto; border-radius:16px; } .login-form { border-radius:16px; } }
+@media(prefers-reduced-transparency:reduce) { .store-header,.detail-panel,.account-record,.empty-record,.ticket-record,.product-card,.login-form { background:#f9fbff; backdrop-filter:none; } }

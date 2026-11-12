@@ -1,9 +1,16 @@
 import "./support.css";
+import "./workspace-support.css";
 import { Suspense } from "react";
 import AgentChat from "@/components/AgentChat";
-import { listTickets } from "@/lib/shop";
+import { listTickets, listOrders } from "@/lib/shop";
 import { currentCustomer } from "@/lib/customer";
 import Link from "next/link";
+async function RecentOrders() {
+  const orders = await listOrders().catch(() => null);
+  return <section className="recent-orders"><div className="panel-title"><h2>Recent orders</h2><Link href="/orders">View all ↗</Link></div>
+    {orders === null ? <p className="muted">Orders could not load.</p> : orders.length === 0 ? <p className="muted">Your orders will appear here after your first purchase.</p> : orders.slice(0, 2).map(order => <Link href={"/orders/"+order.id} className="recent-order" key={order.id}><div><strong>Order #{order.id}</strong><span className="status-badge" data-status={order.status}>{order.status.replaceAll("_", " ")}</span></div><p>{order.order_items.map(item=>item.products.name).join(", ")}</p><small>{order.order_date}<span aria-hidden="true">↗</span></small></Link>)}
+  </section>;
+}
 async function Tickets() {
   const tickets = await listTickets().catch(() => null);
   return (
@@ -65,22 +72,7 @@ export default async function Support() {
           className="support-sidebar"
           aria-label="Order shortcuts and support tickets"
         >
-          <section className="order-shortcut-panel">
-            <h2>Account overview</h2>
-
-            <Link href="/orders">
-              <span>
-                My orders<small>Delivery updates & order details</small>
-              </span>
-              <b aria-hidden="true">↗</b>
-            </Link>
-            <Link href="/returns">
-              <span>
-                My returns<small>Check your return requests</small>
-              </span>
-              <b aria-hidden="true">↗</b>
-            </Link>
-          </section>
+          <Suspense fallback={<p role="status" className="muted">Loading recent orders…</p>}><RecentOrders /></Suspense>
           <Suspense
             fallback={
               <p className="muted" role="status">

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./finish.css";
+import "./workspace.css";
 import ChatProvider from "@/components/ChatProvider";
 
 // YOUR JOB: change the title and description for your app.

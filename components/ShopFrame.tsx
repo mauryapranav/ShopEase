@@ -19,10 +19,16 @@ export default async function ShopFrame({
           </div>
         </div>
       </header>
+      <div className="workspace-shell">
+        <aside className="workspace-nav">
+          <p className="nav-caption">Your workspace</p>
+          <StoreNav />
+          <Link href="/tickets" className="nav-help">Need a follow-up?<strong>Raise a support ticket ↗</strong></Link>
+        </aside>
       <main className="store-main">
-        <StoreNav />
         {children}
       </main>
+      </div>
       <footer>ShopEase · Customer services</footer>
     </>
   );

@@ -162,6 +162,7 @@ export default function AgentChat({
       <div ref={bottomRef} className="chat-viewport space-y-3">
         {messages.length === 0 && (
           <div className="chat-welcome">
+            <span className="conversation-mark" aria-hidden="true">se</span>
             <h2>
               What do you need help with?
             </h2>
