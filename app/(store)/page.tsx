@@ -1,3 +1,4 @@
+import "./support.css";
 import { Suspense } from "react";
 import AgentChat from "@/components/AgentChat";
 import { listTickets } from "@/lib/shop";
@@ -7,13 +8,24 @@ async function Tickets() {
   const tickets = await listTickets().catch(() => null);
   return (
     <section className="tickets-section">
-      <h2>Your support tickets</h2>
+      <div className="ticket-heading">
+        <h2>Your tickets</h2>
+        <span className="ticket-mark" aria-hidden="true">
+          ↗
+        </span>
+      </div>
       {tickets === null ? (
         <p className="notice">
           Tickets could not load. Check Supabase settings.
         </p>
       ) : !tickets.length ? (
-        <p className="muted">Your support requests will appear here.</p>
+        <div className="ticket-empty">
+          <span className="ticket-outline" aria-hidden="true" />
+          <p>No open threads yet.</p>
+          <small>
+            Ask the assistant to connect you with our team when you need a hand.
+          </small>
+        </div>
       ) : (
         tickets.map((ticket) => (
           <article className="ticket-card" key={ticket.id}>
@@ -38,43 +50,57 @@ async function Tickets() {
 export default async function Support() {
   const customer = await currentCustomer();
   return (
-    <>
-      <section className="support-intro">
+    <div className="support-home">
+      <div className="support-title">
         <div>
-          <p className="eyebrow">YOUR PERSONAL SUPPORT DESK</p>
-          <h1>
-            A little help.
-            <br />
-            <em>A whole lot easier.</em>
-          </h1>
-          <p>
-            Hi {customer.name}. Let’s sort out your orders, returns and
-            everything in between.
-          </p>
+          <h1>Good questions. Easy answers.</h1>
+          <p>Your orders, returns and a little peace of mind.</p>
         </div>
-        <div className="support-shortcuts">
-          <Link href="/orders">
-            <span>Track a delivery</span>
-            <small>Find your order and its latest status</small>
-            <b aria-hidden="true">↗</b>
+        <span className="care-label">ShopEase customer care</span>
+      </div>
+      <div className="support-workspace">
+        <AgentChat customerId={customer.id} name={customer.name} />
+        <aside
+          className="support-sidebar"
+          aria-label="Order shortcuts and support tickets"
+        >
+          <section className="order-shortcut-panel">
+            <div className="parcel-art" aria-hidden="true">
+              <span />
+              <i />
+            </div>
+            <h2>Your next stop?</h2>
+            <p>Everything you need, without the digging.</p>
+            <Link href="/orders">
+              <span>
+                My orders<small>Delivery updates & order details</small>
+              </span>
+              <b aria-hidden="true">↗</b>
+            </Link>
+            <Link href="/returns">
+              <span>
+                My returns<small>Check your return requests</small>
+              </span>
+              <b aria-hidden="true">↗</b>
+            </Link>
+          </section>
+          <Suspense
+            fallback={
+              <p className="muted" role="status">
+                Loading your tickets…
+              </p>
+            }
+          >
+            <Tickets />
+          </Suspense>
+          <Link href="/shop" className="shop-shortcut">
+            <span>
+              Something catch your eye?<strong>Explore the collection</strong>
+            </span>
+            <span aria-hidden="true">↗</span>
           </Link>
-          <Link href="/returns">
-            <span>Manage a return</span>
-            <small>Keep an eye on your requests</small>
-            <b aria-hidden="true">↗</b>
-          </Link>
-        </div>
-      </section>
-      <AgentChat customerId={customer.id} name={customer.name} />
-      <Suspense
-        fallback={
-          <p className="muted mt-6" role="status">
-            Loading support tickets…
-          </p>
-        }
-      >
-        <Tickets />
-      </Suspense>
-    </>
+        </aside>
+      </div>
+    </div>
   );
 }

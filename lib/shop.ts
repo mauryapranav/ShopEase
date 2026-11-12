@@ -31,7 +31,7 @@ function ordersQuery(customerId: string) {
 export async function listOrders() {
   const { data, error } = await ordersQuery((await currentCustomer()).id)
     .order("order_date", { ascending: false })
-    .order("id")
+    .order("id", { ascending: false })
     .returns<Order[]>();
   if (error) throw new Error("Orders could not be loaded.");
   return data;

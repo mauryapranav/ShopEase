@@ -9,11 +9,32 @@ import MessageText from "./MessageText";
 import { useRouter, useSearchParams } from "next/navigation";
 import { z } from "zod";
 
-// YOUR JOB: change these sample prompts to match your problem statement.
 const SAMPLE_PROMPTS = [
-  "Show my orders and their delivery status.",
-  "Which of my items can I return?",
-  "I need help from a person. Please open a support ticket.",
+  {
+    title: "Track an order",
+    description: "Where’s my delivery?",
+    style: "track",
+    prompt: "Show my orders and their delivery status.",
+  },
+  {
+    title: "Start a return",
+    description: "Find out what’s eligible",
+    style: "return",
+    prompt: "Which of my items can I return?",
+  },
+  {
+    title: "Cancel an order",
+    description: "Changed your mind?",
+    style: "cancel",
+    prompt:
+      "I would like to cancel an unshipped order. Show me which orders I can cancel.",
+  },
+  {
+    title: "Talk to our team",
+    description: "Get a person to help",
+    style: "human",
+    prompt: "I need help from a person. Please open a support ticket.",
+  },
 ];
 
 export default function AgentChat({
@@ -132,27 +153,59 @@ export default function AgentChat({
   }
 
   return (
-    <div className="support-chat flex min-h-[540px] h-[65vh] flex-col rounded-xl border border-slate-200 bg-white">
-      <div className="chat-header border-b border-slate-200 px-5 py-4">
-        <h2 className="font-semibold">ShopEase assistant</h2>
-        <p className="text-xs opacity-80">
-          Signed in as {name}. Ask about your orders or returns.
-        </p>
+    <div className="support-chat" aria-label="Support conversation">
+      <div className="chat-header">
+        <div className="assistant-avatar" aria-hidden="true">
+          se
+          <span />
+        </div>
+        <div>
+          <h2>ShopEase assistant</h2>
+          <p>Orders. Returns. All sorted here.</p>
+        </div>
+        <span className="private-chat">Your private conversation</span>
       </div>
 
-      <div ref={bottomRef} className="flex-1 space-y-3 overflow-y-auto p-5">
+      <div ref={bottomRef} className="chat-viewport space-y-3">
         {messages.length === 0 && (
-          <div className="space-y-2">
-            <p className="text-sm text-slate-500">Try one of these:</p>
-            {SAMPLE_PROMPTS.map((p) => (
-              <button
-                key={p}
-                onClick={() => send(p)}
-                className="chat-suggestion"
-              >
-                {p}
-              </button>
-            ))}
+          <div className="chat-welcome">
+            <div className="welcome-mark" aria-hidden="true">
+              <span>se</span>
+              <i />
+              <b />
+            </div>
+            <h2>
+              Hey {name},<br />
+              what can we sort out?
+            </h2>
+            <p>Pick a starting point, or ask me anything about your order.</p>
+            <div className="chat-actions">
+              {SAMPLE_PROMPTS.map((action) => (
+                <button
+                  key={action.style}
+                  disabled={!chats[customerId] || loading}
+                  onClick={() => send(action.prompt)}
+                  className={"chat-action action-" + action.style}
+                >
+                  <span className="action-symbol" aria-hidden="true">
+                    {action.style === "track"
+                      ? "↗"
+                      : action.style === "return"
+                        ? "↶"
+                        : action.style === "cancel"
+                          ? "×"
+                          : "…"}
+                  </span>
+                  <span>
+                    <strong>{action.title}</strong>
+                    <small>{action.description}</small>
+                  </span>
+                  <span className="action-arrow" aria-hidden="true">
+                    ↗
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -166,7 +219,7 @@ export default function AgentChat({
             <div
               className={
                 m.role === "user"
-                  ? "max-w-[85%] rounded-2xl bg-slate-900 px-3 py-2 text-sm text-white"
+                  ? "user-bubble max-w-[85%]"
                   : "max-w-[85%] space-y-2"
               }
             >
@@ -220,14 +273,14 @@ export default function AgentChat({
           e.preventDefault();
           send(input);
         }}
-        className="flex gap-2 border-t border-slate-200 p-3"
+        className="chat-composer"
       >
         <input
           maxLength={4000}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           aria-label="Message to ShopEase support"
-          placeholder="Type your question..."
+          placeholder="Ask about an order, a return, anything…"
           className="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
         />
         <button
@@ -235,7 +288,7 @@ export default function AgentChat({
           disabled={!chats[customerId] || loading || !input.trim()}
           className="rounded-lg bg-slate-900 px-4 py-2 text-sm text-white disabled:opacity-50"
         >
-          Send
+          Send <span aria-hidden="true">↗</span>
         </button>
       </form>
     </div>
