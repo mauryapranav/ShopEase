@@ -7,21 +7,24 @@ export default async function Returns() {
     <>
       <div className="page-heading">
         <p className="eyebrow">YOUR ACCOUNT</p>
-        <h1>My Returns</h1>
+        <h1>Returns</h1>
       </div>
       {!rows ? (
         <p>Could not load returns. Refresh to try again.</p>
       ) : !rows.length ? (
-        <p>No returns yet. Request one in Support chat.</p>
+        <div className="empty-record">
+          <h2>No returns yet</h2>
+          <Link href="/">Request a return in support chat →</Link>
+        </div>
       ) : (
         rows.map((row) => (
-          <article
-            key={row.id}
-            className="mb-3 rounded-xl border border-slate-200 bg-white p-5"
-          >
+          <article key={row.id} className="account-record">
             <h2 className="font-bold">{row.products.name}</h2>
             <p>
-              Return #{row.id} · {row.status.replaceAll("_", " ")}
+              Return #{row.id}{" "}
+              <span className="status-badge">
+                {row.status.replaceAll("_", " ")}
+              </span>
             </p>
             <p className="mt-2 text-sm">
               <Link className="order-link" href={"/orders/" + row.order_id}>

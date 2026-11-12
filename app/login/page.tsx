@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 export default function Login() {
-  const [username, setUsername] = useState("nitin");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -13,7 +12,7 @@ export default function Login() {
       const response = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ passcode: password }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Sign in failed.");
@@ -35,11 +34,11 @@ export default function Login() {
           ShopEase<span>●</span>
         </a>
         <div>
-          <p className="eyebrow">EVERYDAY FINDS</p>
+          <p className="eyebrow">CUSTOMER SERVICES</p>
           <h1>
-            A little something
+            Your ShopEase
             <br />
-            for your everyday.
+            account.
           </h1>
           <p>
             Shop your favourites. Keep track of every order.
@@ -47,26 +46,16 @@ export default function Login() {
             Get help whenever you need it.
           </p>
         </div>
-        <p>Shopping made simple.</p>
+
       </section>
       <section className="login-form">
         <form onSubmit={login}>
-          <p className="eyebrow">YOUR SHOPEASE ACCOUNT</p>
-          <h2>Welcome back.</h2>
+          <p className="eyebrow">WORKSHOP DEMO</p>
+          <h2>Sign in</h2>
           <p className="muted">
-            Sign in to shop with your ₹1,000 starter wallet.
+            Enter the shared workshop passcode. Orders and tickets are visible to everyone in this demo.
           </p>
-          <label htmlFor="username">Username</label>
-          <select
-            id="username"
-            value={username}
-            onChange={(event) => setUsername(event.target.value)}
-          >
-            {["nitin", "pranav", "gokul", "loki"].map((name) => (
-              <option key={name}>{name}</option>
-            ))}
-          </select>
-          <label htmlFor="password">Password</label>
+          <label htmlFor="password">Passcode</label>
           <input
             id="password"
             type="password"

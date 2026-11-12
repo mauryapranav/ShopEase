@@ -21,8 +21,9 @@ export default function StoreNav() {
     <nav className="store-nav" aria-label="Main navigation">
       {[
         ["Support chat", "/"],
-        ["My Orders", "/orders"],
-        ["My Returns", "/returns"],
+        ["Tickets", "/tickets"],
+        ["Orders", "/orders"],
+        ["Returns", "/returns"],
         ["Shop", "/shop"],
       ].map(([name, url]) => (
         <Link

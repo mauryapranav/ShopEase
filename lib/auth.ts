@@ -1,10 +1,5 @@
-export const SESSION_COOKIE = "shop_session_v2";
-export const accounts = [
-  { id: "C001", name: "Nitin", username: "nitin", password: "1111" },
-  { id: "C002", name: "Pranav", username: "pranav", password: "2222" },
-  { id: "C003", name: "Gokul", username: "gokul", password: "3333" },
-  { id: "C004", name: "Loki", username: "loki", password: "4444" },
-];
+export const SESSION_COOKIE = "shop_session_demo_v1";
+export const demoCustomer = { id: "C001", name: "Demo customer" };
 
 async function signingKey() {
   const secret = process.env.APP_PASSCODE?.trim();
@@ -61,10 +56,7 @@ export async function readSession(value: string | undefined) {
     const data = JSON.parse(atob(payload));
     if (typeof data.expires !== "number" || data.expires <= Date.now())
       return null;
-    const account = accounts.find((account) => account.id === data.customerId);
-    return account
-      ? { id: account.id, name: account.name, username: account.username }
-      : null;
+    return data.customerId === demoCustomer.id ? demoCustomer : null;
   } catch {
     return null;
   }

@@ -146,3 +146,78 @@ footer { padding:25px; text-align:center; border-top:1px solid var(--line); font
 
 .cancellation-confirmation { padding:17px; background:#fff6e8; border:1px solid #e4cfa9; border-radius:12px; font-size:13px; }
 .cancellation-confirmation p { margin:10px 0; line-height:1.6; }
+
+/* Shared account, catalogue and support surfaces */
+:root { --ink:#192431; --green:#264dc4; --accent:#264dc4; --paper:#f5f6f8; --wash:#f1f4f9; --line:#d7dee6; --muted:#515f6e; }
+body { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+.store-header { background:var(--ink); color:white; }
+.header-inner { padding-block:16px; }
+.brand { font-weight:720; letter-spacing:-.065em; }
+.brand span { color:#8daaff; }
+.customer-avatar { background:#344253; color:white; text-transform:uppercase; }
+.account { text-transform:capitalize; }
+.wallet { background:#263343; color:white; border-color:#4c5967; border-radius:5px; text-transform:none; }
+.store-nav { margin-bottom:24px; }
+.store-nav a { color:var(--muted); }
+.support-title h1,.page-heading h1,.collection-heading h2,.login-form h2,.shop-hero h1,.login-story h1 { font-family:inherit; font-weight:600; line-height:1.08; letter-spacing:-.055em; }
+.support-title h1,.page-heading h1 { font-size:clamp(32px,4vw,48px); }
+.page-heading { border-bottom:1px solid var(--line); padding-bottom:20px; }
+.eyebrow,.muted,.back-link,.detail-panel dt { color:var(--muted); }
+.page-heading .eyebrow { margin-bottom:9px; }
+.primary,.product-bottom button { border-radius:5px; }
+.primary:hover,.product-bottom button:hover { background:#193791; }
+.shop-hero,.login-story { background:#253341; color:white; }
+.shop-hero { min-height:260px; grid-template-columns:1fr 1fr; }
+.shop-hero img { max-height:325px; }
+.shop-hero .eyebrow,.shop-hero p:not(.eyebrow),.login-story p { color:#cfdae6; }
+.shop-hero .primary { color:var(--ink); background:white; }
+.categories button { border-radius:5px; }
+.product-card { border-color:var(--line); border-radius:6px; }
+.product-photo { background:#e3e7eb; }
+.product-photo span { color:var(--ink); }
+.product-content h3 { font-size:16px; letter-spacing:-.02em; }
+.product-bottom { padding-top:12px; border-top:1px solid var(--line); }
+.login-story { justify-content:flex-start; }
+.login-story > div { margin-block:auto; padding-block:24px; border-top:1px solid #607080; }
+.login-story h1 { font-size:clamp(40px,6vw,88px); }
+.login-form { background:white; }
+.login-form h2 { font-size:42px; }
+input, select,.detail-panel,.notice { border-color:var(--line); }
+.notice { background:var(--wash); }
+.account-record,.empty-record { background:white; border:1px solid var(--line); border-radius:8px; padding:clamp(16px,2.5vw,28px); margin:0 0 14px; }
+.account-record h2,.empty-record h2 { font-size:19px; letter-spacing:-.025em; margin-bottom:5px; }
+.account-record ul { padding-left:16px; border-left:2px solid var(--line); font-size:14px; }
+.order-link,.order-card-action,.empty-record a,.message-orders a { color:var(--accent); text-decoration-color:#a7b9e4; }
+.order-link:hover,.order-card-action:hover,.empty-record a:hover { color:#17317d; text-decoration:underline; }
+.message-orders a,.message-orders,.order-card-action,.order-item { border-color:var(--line); }
+.message-orders a:hover { background:var(--wash); }
+.status-badge { background:var(--wash); border-color:var(--line); color:#384960; border-radius:4px; letter-spacing:.02em; }
+.order-detail .page-heading .status-badge { margin:12px 0 0; }
+.detail-panel { border-radius:8px; }
+.detail-panel h2 { font:600 21px/1.3 Inter,"Segoe UI",Arial,sans-serif; letter-spacing:-.035em; border-bottom:1px solid var(--line); padding-bottom:14px; }
+.order-total { background:var(--wash); padding:14px; }
+a:focus-visible,button:focus-visible,input:focus,select:focus { outline:2px solid #5275d7; outline-offset:3px; }
+@media(max-width:650px) { .shop-hero { grid-template-columns:1fr; } .store-nav { gap:18px; } .header-inner { padding-block:12px; } .login-story { gap:8px; } .login-story > div { padding:16px 0 0; } .shop-hero img { height:150px; } }
+
+.ticket-desk { display:grid; grid-template-columns:minmax(240px,.85fr) minmax(0,1.6fr); gap:24px; align-items:start; }
+.ticket-desk label { display:block; font-size:14px; font-weight:600; }
+.ticket-desk textarea { display:block; resize:vertical; width:100%; min-height:85px; margin:8px 0 14px; padding:10px; border:1px solid var(--line); border-radius:5px; background:white; }
+.ticket-desk .attach-chat { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.ticket-desk form .primary { margin-top:16px; }
+.ticket-filter { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.ticket-filter h2 { font-weight:600; font-size:20px; }
+.ticket-filter select { padding:7px 10px; font-size:13px; }
+.ticket-record { border:1px solid var(--line); border-radius:8px; margin-bottom:10px; background:white; overflow-wrap:anywhere; }
+.ticket-record summary { cursor:pointer; padding:16px; }
+.ticket-record summary > span:first-child { display:inline; }
+.ticket-record summary small { color:var(--muted); font-size:12px; }
+.ticket-record summary strong { display:block; margin:4px 0; }
+.ticket-record .status-badge { margin:0; }
+.ticket-thread { padding:16px; border-top:1px solid var(--line); }
+.ticket-thread h3 { font-weight:650; margin:16px 0 6px; }
+.ticket-thread blockquote { border-left:2px solid var(--line); padding-left:12px; margin:12px 0; white-space:pre-wrap; font-size:14px; }
+.ticket-thread label { margin-top:20px; }
+.ticket-controls { display:flex; gap:8px; flex-wrap:wrap; }
+.ticket-controls button { border:1px solid var(--line); color:var(--accent); padding:7px 11px; border-radius:4px; }
+.ticket-desk [role=status]:not(:empty) { font-size:13px; margin-top:12px; }
+@media(max-width:760px) { .ticket-desk {grid-template-columns:1fr;} }

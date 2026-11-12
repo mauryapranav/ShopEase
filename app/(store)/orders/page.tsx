@@ -7,18 +7,17 @@ export default async function Orders() {
     <>
       <div className="page-heading">
         <p className="eyebrow">YOUR ACCOUNT</p>
-        <h1>My Orders</h1>
+        <h1>Orders</h1>
       </div>
       {!orders ? (
         <p>Could not load orders. Refresh to try again.</p>
       ) : !orders.length ? (
-        <p>No orders yet.</p>
+        <div className="empty-record">
+          No orders yet. <Link href="/shop">Browse products →</Link>
+        </div>
       ) : (
         orders.map((order) => (
-          <article
-            key={order.id}
-            className="mb-3 rounded-xl border border-slate-200 bg-white p-5"
-          >
+          <article key={order.id} className="account-record">
             <h2 className="font-bold">
               <Link className="order-link" href={"/orders/" + order.id}>
                 Order #{order.id} →

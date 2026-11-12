@@ -32,7 +32,7 @@ export default function ChatProvider({
     for (const [id, chat] of Object.entries(chats)) {
       try {
         sessionStorage.setItem(
-          "shopease-chat-v2-" + id,
+          "shopease-demo-chat-" + id,
           JSON.stringify(
             (chat.loading ? chat.messages.slice(0, -1) : chat.messages).slice(
               -100,

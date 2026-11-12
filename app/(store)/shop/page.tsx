@@ -7,16 +7,15 @@ export default async function Home() {
     <>
       <section className="shop-hero">
         <div>
-          <p className="eyebrow">SMALL FINDS. EVERYDAY JOY.</p>
+          <p className="eyebrow">SHOPEASE STORE</p>
           <h1>
-            Make room for
+            The everyday
             <br />
-            your favourites.
+            collection.
           </h1>
           <p>
-            From home essentials to your next daily companion.
-            <br />
-            Find something that feels like you.
+            Browse clothing, electronics and home essentials.
+
           </p>
           <a href="#catalog" className="primary">
             Explore the collection

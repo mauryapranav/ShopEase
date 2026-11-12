@@ -52,7 +52,7 @@ export default function Catalog({ products }: { products: Product[] }) {
           data.order_id +
           " placed for " +
           product.name +
-          ". Your wallet has been updated.",
+          ".",
       );
       router.refresh();
     } catch (error) {
@@ -74,8 +74,7 @@ export default function Catalog({ products }: { products: Product[] }) {
     <section id="catalog">
       <div className="collection-heading">
         <div>
-          <p className="eyebrow">THE COLLECTION</p>
-          <h2>Discover your next favourite</h2>
+          <h2>Shop all products</h2>
         </div>
         <input
           aria-label="Search products"
@@ -131,7 +130,7 @@ export default function Catalog({ products }: { products: Product[] }) {
                   ₹{Number(product.price).toLocaleString("en-IN")}
                 </strong>
                 <button disabled={Boolean(busy)} onClick={() => buy(product)}>
-                  {busy === product.id ? "Placing…" : "Buy now"}
+                  {busy === product.id ? "Placing…" : "Place order"}
                 </button>
               </div>
             </div>

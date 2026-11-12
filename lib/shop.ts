@@ -84,17 +84,6 @@ export async function listReturns() {
   if (error) throw new Error("Returns could not be loaded.");
   return data;
 }
-export async function walletBalance() {
-  const { id } = await currentCustomer();
-  const { data, error } = await getSupabase()
-    .from("wallets")
-    .select("balance")
-    .eq("customer_id", id)
-    .single();
-  if (error)
-    throw new Error("Wallet unavailable. Run the four-user SQL update.");
-  return Number(data.balance);
-}
 export async function listProducts() {
   const { data, error } = await getSupabase()
     .from("products")
@@ -118,17 +107,3 @@ export async function listTickets() {
   return data;
 }
 
-export async function walletSnapshot() {
-  const customer = await currentCustomer();
-  await getSupabase().rpc("shop_settle_refunds");
-  const [balance, refunds] = await Promise.all([
-    walletBalance(),
-    getSupabase()
-      .from("wallet_refunds")
-      .select("order_id,amount,due_at,credited_at")
-      .eq("customer_id", customer.id)
-      .is("credited_at", null),
-  ]);
-  if (refunds.error) throw new Error("Refund status unavailable.");
-  return { balance, pending: refunds.data.length };
-}

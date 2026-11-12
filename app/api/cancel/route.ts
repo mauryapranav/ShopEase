@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       { error: "Invalid confirmation." },
       { status: 400 },
     );
-  const { data, error } = await getSupabase().rpc("shop_confirm_cancellation", {
+  const { data, error } = await getSupabase().rpc("shop_mock_confirm_cancellation", {
     p_customer: customer.id,
     p_intent: parsed.data.confirmationId,
   });

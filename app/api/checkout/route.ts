@@ -14,16 +14,14 @@ export async function POST(request: Request) {
       { error: "Invalid purchase request." },
       { status: 400 },
     );
-  const { data, error } = await getSupabase().rpc("shop_purchase", {
+  const { data, error } = await getSupabase().rpc("shop_mock_purchase", {
     p_customer: customer.id,
     p_product: parsed.data.productId,
     p_request: parsed.data.requestId,
   });
   if (error) {
     const expected = [
-      "Insufficient wallet balance",
       "Product unavailable",
-      "Wallet unavailable",
     ];
     const message = expected.find((message) => error.message.includes(message));
     return NextResponse.json(

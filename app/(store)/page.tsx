@@ -9,10 +9,10 @@ async function Tickets() {
   return (
     <section className="tickets-section">
       <div className="ticket-heading">
-        <h2>Your tickets</h2>
-        <span className="ticket-mark" aria-hidden="true">
-          ↗
-        </span>
+        <h2>Recent tickets</h2>
+        <Link className="order-link" href="/tickets">
+          Raise or manage a ticket →
+        </Link>
       </div>
       {tickets === null ? (
         <p className="notice">
@@ -20,19 +20,19 @@ async function Tickets() {
         </p>
       ) : !tickets.length ? (
         <div className="ticket-empty">
-          <span className="ticket-outline" aria-hidden="true" />
-          <p>No open threads yet.</p>
-          <small>
-            Ask the assistant to connect you with our team when you need a hand.
-          </small>
+          <p>No support tickets yet.</p>
         </div>
       ) : (
-        tickets.map((ticket) => (
+        tickets.slice(0, 3).map((ticket) => (
           <article className="ticket-card" key={ticket.id}>
             <div>
-              <strong>Ticket #{ticket.id}</strong>
+              <Link className="order-link" href={"/tickets#" + ticket.id}>
+                Ticket #{ticket.id}
+              </Link>
               <span className="status-badge">
-                {ticket.status.replaceAll("_", " ")}
+                {ticket.status === "resolved"
+                  ? "Closed"
+                  : ticket.status.replaceAll("_", " ")}
               </span>
             </div>
             <p>{ticket.issue}</p>
@@ -53,24 +53,21 @@ export default async function Support() {
     <div className="support-home">
       <div className="support-title">
         <div>
-          <h1>Good questions. Easy answers.</h1>
-          <p>Your orders, returns and a little peace of mind.</p>
+          <h1>Customer support</h1>
+          <p>
+            Manage deliveries, returns and tickets with your support assistant.
+          </p>
         </div>
-        <span className="care-label">ShopEase customer care</span>
       </div>
       <div className="support-workspace">
-        <AgentChat customerId={customer.id} name={customer.name} />
+        <AgentChat customerId={customer.id} />
         <aside
           className="support-sidebar"
           aria-label="Order shortcuts and support tickets"
         >
           <section className="order-shortcut-panel">
-            <div className="parcel-art" aria-hidden="true">
-              <span />
-              <i />
-            </div>
-            <h2>Your next stop?</h2>
-            <p>Everything you need, without the digging.</p>
+            <h2>Account overview</h2>
+
             <Link href="/orders">
               <span>
                 My orders<small>Delivery updates & order details</small>
@@ -95,7 +92,7 @@ export default async function Support() {
           </Suspense>
           <Link href="/shop" className="shop-shortcut">
             <span>
-              Something catch your eye?<strong>Explore the collection</strong>
+              <strong>Browse the shop</strong>
             </span>
             <span aria-hidden="true">↗</span>
           </Link>

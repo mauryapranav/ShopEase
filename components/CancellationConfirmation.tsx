@@ -27,13 +27,7 @@ export default function CancellationConfirmation({
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "Cancellation failed.");
       setDone(true);
-      setStatus(
-        "Order #" +
-          orderId +
-          " cancelled. ₹" +
-          Number(data.amount).toLocaleString("en-IN") +
-          " will return to your wallet in 1–2 minutes.",
-      );
+      setStatus("Order #" + orderId + " cancelled.");
       router.refresh();
     } catch (error) {
       setStatus(
@@ -51,8 +45,7 @@ export default function CancellationConfirmation({
         <>
           <strong>Cancel order #{orderId}?</strong>
           <p>
-            Refund of ₹{Number(amount).toLocaleString("en-IN")} to your wallet
-            in 1–2 minutes after confirmation.
+            Order total ₹{Number(amount).toLocaleString("en-IN")}. Confirm to cancel this mock order.
           </p>
           <button className="primary" disabled={busy} onClick={confirm}>
             {busy ? "Cancelling…" : "Confirm cancellation"}

@@ -1,78 +1,52 @@
--- Run once after the existing PS1 seed. Safe to repeat.
--- Existing C001-C004 orders belong to the renamed demo accounts.
+-- Run in Supabase SQL Editor after the PS1 seed. Safe to repeat.
 BEGIN;
 SET LOCAL search_path TO public;
-UPDATE customers SET name = CASE id
-  WHEN 'C001' THEN 'Nitin' WHEN 'C002' THEN 'Pranav'
-  WHEN 'C003' THEN 'Gokul' WHEN 'C004' THEN 'Loki' END,
-  email = CASE id WHEN 'C001' THEN 'nitin@example.com'
-  WHEN 'C002' THEN 'pranav@example.com' WHEN 'C003' THEN 'gokul@example.com'
-  WHEN 'C004' THEN 'loki@example.com' END
-WHERE id IN ('C001','C002','C003','C004');
-
-CREATE TABLE IF NOT EXISTS wallets (
-  customer_id text PRIMARY KEY REFERENCES customers(id),
-  balance numeric(10,2) NOT NULL DEFAULT 1000 CHECK (balance >= 0)
-);
-INSERT INTO wallets(customer_id)
-SELECT id FROM customers WHERE id IN ('C001','C002','C003','C004')
-ON CONFLICT DO NOTHING;
-ALTER TABLE wallets ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON wallets FROM anon, authenticated;
-GRANT SELECT, UPDATE, INSERT ON wallets TO service_role;
-
 CREATE SEQUENCE IF NOT EXISTS shop_order_id_seq START 2000;
 -- Preserve the sequence position and avoid existing order IDs on repeated runs.
 SELECT setval('shop_order_id_seq', greatest(
   (SELECT last_value FROM shop_order_id_seq),
   COALESCE((SELECT max(id) FROM orders), 1999)), true);
-CREATE TABLE IF NOT EXISTS shop_purchases (
+CREATE TABLE IF NOT EXISTS shop_mock_purchases (
   request_id uuid PRIMARY KEY,
   customer_id text NOT NULL REFERENCES customers(id),
   product_id text NOT NULL REFERENCES products(id),
-  order_id integer NOT NULL REFERENCES orders(id),
-  balance_after numeric(10,2) NOT NULL
+  order_id integer NOT NULL REFERENCES orders(id)
 );
-ALTER TABLE shop_purchases ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON shop_purchases FROM anon, authenticated;
-GRANT ALL ON shop_purchases TO service_role;
+ALTER TABLE shop_mock_purchases ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON shop_mock_purchases FROM anon, authenticated;
+GRANT ALL ON shop_mock_purchases TO service_role;
 GRANT USAGE, SELECT ON SEQUENCE shop_order_id_seq TO service_role;
 
-CREATE OR REPLACE FUNCTION shop_purchase(p_customer text, p_product text, p_request uuid)
+CREATE OR REPLACE FUNCTION shop_mock_purchase(p_customer text, p_product text, p_request uuid)
 RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path = public
 AS $fn$
 DECLARE
-  funds numeric;
   product products%ROWTYPE;
-  previous shop_purchases%ROWTYPE;
+  previous shop_mock_purchases%ROWTYPE;
   new_order integer;
 BEGIN
-  -- Lock the wallet to serialize concurrent purchases for the same account.
-  SELECT balance INTO funds FROM wallets WHERE customer_id = p_customer FOR UPDATE;
-  IF NOT FOUND THEN RAISE EXCEPTION 'Wallet unavailable'; END IF;
-  SELECT * INTO previous FROM shop_purchases WHERE request_id = p_request;
+  PERFORM pg_advisory_xact_lock(hashtextextended(p_request::text, 0));
+  SELECT * INTO previous FROM shop_mock_purchases WHERE request_id = p_request;
   IF FOUND THEN
     IF previous.customer_id <> p_customer OR previous.product_id <> p_product THEN
       RAISE EXCEPTION 'Request already used';
     END IF;
-    RETURN jsonb_build_object('order_id', previous.order_id, 'balance', previous.balance_after);
+    RETURN jsonb_build_object('order_id', previous.order_id);
   END IF;
-  SELECT * INTO product FROM products WHERE id = p_product FOR SHARE;
+  SELECT * INTO product FROM products WHERE id = p_product;
   IF NOT FOUND OR product.price <= 0 THEN RAISE EXCEPTION 'Product unavailable'; END IF;
-  IF product.price > funds THEN RAISE EXCEPTION 'Insufficient wallet balance'; END IF;
   new_order := nextval('shop_order_id_seq');
   INSERT INTO orders(id, customer_id, order_date, status, expected_delivery, total_amount)
   VALUES (new_order, p_customer, (now() AT TIME ZONE 'Asia/Kolkata')::date, 'placed',
     (now() AT TIME ZONE 'Asia/Kolkata')::date + 5, product.price);
   INSERT INTO order_items(order_id, product_id, quantity, unit_price)
   VALUES (new_order, p_product, 1, product.price);
-  UPDATE wallets SET balance = balance - product.price WHERE customer_id = p_customer;
-  INSERT INTO shop_purchases VALUES(p_request, p_customer, p_product, new_order, funds-product.price);
-  RETURN jsonb_build_object('order_id', new_order, 'balance', funds-product.price);
+  INSERT INTO shop_mock_purchases VALUES(p_request, p_customer, p_product, new_order);
+  RETURN jsonb_build_object('order_id', new_order);
 END;
 $fn$;
-REVOKE ALL ON FUNCTION shop_purchase(text,text,uuid) FROM PUBLIC, anon, authenticated;
-GRANT EXECUTE ON FUNCTION shop_purchase(text,text,uuid) TO service_role;
+REVOKE ALL ON FUNCTION shop_mock_purchase(text,text,uuid) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION shop_mock_purchase(text,text,uuid) TO service_role;
 
 -- Recent fictional orders make return and late-delivery demos possible for every login.
 INSERT INTO orders(id, customer_id, order_date, status, expected_delivery, delivered_date, total_amount)
@@ -121,12 +95,7 @@ GRANT EXECUTE ON FUNCTION shop_return(text,integer,text,text) TO service_role;
 GRANT SELECT, INSERT, UPDATE ON orders, order_items, returns, support_tickets TO service_role;
 GRANT SELECT ON customers, products TO service_role;
 GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO service_role;
-NOTIFY pgrst, 'reload schema';
-SELECT c.name,w.balance FROM customers c JOIN wallets w ON w.customer_id=c.id ORDER BY c.id;
-COMMIT;
 
-
-BEGIN;
 CREATE TABLE IF NOT EXISTS public.cancellation_intents (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id text NOT NULL REFERENCES public.customers(id),
@@ -134,17 +103,9 @@ CREATE TABLE IF NOT EXISTS public.cancellation_intents (
   expires_at timestamptz NOT NULL DEFAULT now() + interval '10 minutes',
   confirmed_at timestamptz
 );
-CREATE TABLE IF NOT EXISTS public.wallet_refunds (
-  order_id integer PRIMARY KEY REFERENCES public.orders(id),
-  customer_id text NOT NULL REFERENCES public.customers(id),
-  amount numeric(10,2) NOT NULL CHECK(amount > 0),
-  due_at timestamptz NOT NULL DEFAULT now() + interval '60 seconds',
-  credited_at timestamptz
-);
 ALTER TABLE public.cancellation_intents ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.wallet_refunds ENABLE ROW LEVEL SECURITY;
-REVOKE ALL ON public.cancellation_intents, public.wallet_refunds FROM anon, authenticated;
-GRANT ALL ON public.cancellation_intents, public.wallet_refunds TO service_role;
+REVOKE ALL ON public.cancellation_intents FROM anon, authenticated;
+GRANT ALL ON public.cancellation_intents TO service_role;
 
 CREATE OR REPLACE FUNCTION public.shop_request_cancellation(p_customer text, p_order integer)
 RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $fn$
@@ -158,47 +119,72 @@ BEGIN
 END;
 $fn$;
 
-CREATE OR REPLACE FUNCTION public.shop_confirm_cancellation(p_customer text, p_intent uuid)
+CREATE OR REPLACE FUNCTION public.shop_mock_confirm_cancellation(p_customer text, p_intent uuid)
 RETURNS jsonb LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $fn$
-DECLARE intent cancellation_intents%ROWTYPE; purchase orders%ROWTYPE; refund wallet_refunds%ROWTYPE;
+DECLARE intent cancellation_intents%ROWTYPE; purchase orders%ROWTYPE;
 BEGIN
   SELECT * INTO intent FROM cancellation_intents WHERE id=p_intent AND customer_id=p_customer FOR UPDATE;
   IF NOT FOUND THEN RAISE EXCEPTION 'Confirmation not found'; END IF;
   IF intent.confirmed_at IS NOT NULL THEN
-    SELECT * INTO refund FROM wallet_refunds WHERE order_id=intent.order_id;
-    RETURN jsonb_build_object('orderId',intent.order_id,'amount',refund.amount,'dueAt',refund.due_at);
+    RETURN jsonb_build_object('orderId',intent.order_id);
   END IF;
   IF intent.expires_at < now() THEN RAISE EXCEPTION 'Confirmation expired. Ask to cancel again.'; END IF;
   SELECT * INTO purchase FROM orders WHERE id=intent.order_id AND customer_id=p_customer FOR UPDATE;
   IF NOT FOUND OR purchase.status <> 'placed' THEN RAISE EXCEPTION 'This order has already shipped or been cancelled'; END IF;
-  IF NOT EXISTS(SELECT 1 FROM wallets WHERE customer_id=p_customer) THEN RAISE EXCEPTION 'Wallet unavailable'; END IF;
   UPDATE orders SET status='cancelled' WHERE id=purchase.id;
-  INSERT INTO wallet_refunds(order_id,customer_id,amount) VALUES(purchase.id,p_customer,purchase.total_amount) RETURNING * INTO refund;
   UPDATE cancellation_intents SET confirmed_at=now() WHERE id=p_intent;
-  RETURN jsonb_build_object('orderId',purchase.id,'amount',refund.amount,'dueAt',refund.due_at);
+  RETURN jsonb_build_object('orderId',purchase.id);
 END;
 $fn$;
 
-CREATE OR REPLACE FUNCTION public.shop_settle_refunds()
-RETURNS integer LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $fn$
-DECLARE refund wallet_refunds%ROWTYPE; settled integer := 0;
+REVOKE ALL ON FUNCTION shop_request_cancellation(text,integer), shop_mock_confirm_cancellation(text,uuid) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION shop_request_cancellation(text,integer), shop_mock_confirm_cancellation(text,uuid) TO service_role;
+
+DO $$
 BEGIN
-  FOR refund IN SELECT * FROM wallet_refunds WHERE credited_at IS NULL AND due_at <= now() ORDER BY customer_id,order_id FOR UPDATE SKIP LOCKED LOOP
-    UPDATE wallets SET balance=balance+refund.amount WHERE customer_id=refund.customer_id;
-    IF NOT FOUND THEN RAISE EXCEPTION 'Refund wallet unavailable'; END IF;
-    UPDATE wallet_refunds SET credited_at=now() WHERE order_id=refund.order_id;
-    settled := settled+1;
-  END LOOP;
-  RETURN settled;
-END;
-$fn$;
-REVOKE ALL ON FUNCTION public.shop_request_cancellation(text,integer), public.shop_confirm_cancellation(text,uuid), public.shop_settle_refunds() FROM PUBLIC,anon,authenticated;
-GRANT EXECUTE ON FUNCTION public.shop_request_cancellation(text,integer), public.shop_confirm_cancellation(text,uuid), public.shop_settle_refunds() TO service_role;
+  IF to_regclass('cron.job') IS NOT NULL THEN
+    PERFORM cron.unschedule(jobid) FROM cron.job WHERE jobname='shopease-wallet-refunds';
+  END IF;
+END $$;
+
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS chat_history jsonb NOT NULL DEFAULT '[]';
+ALTER TABLE support_tickets ADD COLUMN IF NOT EXISTS request_id uuid;
+CREATE UNIQUE INDEX IF NOT EXISTS support_tickets_request_idx ON support_tickets(request_id);
+CREATE TABLE IF NOT EXISTS ticket_events (
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  ticket_id bigint NOT NULL REFERENCES support_tickets(id),
+  request_id uuid UNIQUE NOT NULL,
+  body text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+ALTER TABLE ticket_events ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON ticket_events FROM PUBLIC, anon, authenticated;
+GRANT SELECT, INSERT ON ticket_events TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE ticket_events_id_seq TO service_role;
+
+CREATE OR REPLACE FUNCTION shop_update_ticket(p_customer text, p_ticket bigint, p_action text, p_note text, p_request uuid)
+RETURNS void LANGUAGE plpgsql SECURITY INVOKER SET search_path=public AS $$
+DECLARE existing support_tickets%ROWTYPE; next_status text; event_text text;
+BEGIN
+  SELECT * INTO existing FROM support_tickets WHERE id=p_ticket AND customer_id=p_customer FOR UPDATE;
+  IF NOT FOUND THEN RAISE EXCEPTION 'Ticket unavailable'; END IF;
+  IF EXISTS (SELECT FROM ticket_events WHERE request_id=p_request AND ticket_id=p_ticket) THEN RETURN; END IF;
+  IF p_action='note' THEN
+    IF existing.status='resolved' OR coalesce(length(trim(p_note)),0) NOT BETWEEN 1 AND 1500 THEN
+      RAISE EXCEPTION 'Cannot add note'; END IF;
+    event_text := trim(p_note);
+  ELSE
+    next_status := CASE p_action WHEN 'close' THEN 'resolved' WHEN 'reopen' THEN 'open' WHEN 'start' THEN 'in_progress' END;
+    IF next_status IS NULL OR (p_action='start' AND existing.status<>'open')
+      OR (p_action='close' AND existing.status='resolved') OR (p_action='reopen' AND existing.status<>'resolved') THEN
+      RAISE EXCEPTION 'Ticket status changed'; END IF;
+    UPDATE support_tickets SET status=next_status WHERE id=p_ticket;
+    event_text := CASE p_action WHEN 'close' THEN 'Ticket closed.' WHEN 'start' THEN 'Ticket marked in progress.' ELSE 'Ticket reopened.' END;
+  END IF;
+  INSERT INTO ticket_events(ticket_id,request_id,body) VALUES(p_ticket,p_request,event_text);
+END $$;
+REVOKE ALL ON FUNCTION shop_update_ticket(text,bigint,text,text,uuid) FROM PUBLIC, anon, authenticated;
+GRANT EXECUTE ON FUNCTION shop_update_ticket(text,bigint,text,text,uuid) TO service_role;
 NOTIFY pgrst, 'reload schema';
 COMMIT;
 
-
--- Supabase SQL Editor, run as postgres. Runs while browsers are closed.
-CREATE EXTENSION IF NOT EXISTS pg_cron;
-SELECT cron.schedule('shopease-wallet-refunds', '* * * * *', 'SELECT public.shop_settle_refunds();');
-SELECT jobname,schedule,active FROM cron.job WHERE jobname='shopease-wallet-refunds';

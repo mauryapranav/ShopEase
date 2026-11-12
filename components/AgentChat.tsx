@@ -39,10 +39,8 @@ const SAMPLE_PROMPTS = [
 
 export default function AgentChat({
   customerId,
-  name,
 }: {
   customerId: string;
-  name: string;
 }) {
   const { chats, update } = useChats();
   const chat = chats[customerId] || emptyChat;
@@ -59,7 +57,7 @@ export default function AgentChat({
       }));
     }
   }, [order, customerId, update]);
-  const storageKey = "shopease-chat-v2-" + customerId;
+  const storageKey = "shopease-demo-chat-" + customerId;
   function setMessages(messages: Message[]) {
     update(customerId, (chat) => ({ ...chat, messages }));
   }
@@ -155,28 +153,17 @@ export default function AgentChat({
   return (
     <div className="support-chat" aria-label="Support conversation">
       <div className="chat-header">
-        <div className="assistant-avatar" aria-hidden="true">
-          se
-          <span />
-        </div>
         <div>
           <h2>ShopEase assistant</h2>
-          <p>Orders. Returns. All sorted here.</p>
+          <p>AI support</p>
         </div>
-        <span className="private-chat">Your private conversation</span>
       </div>
 
       <div ref={bottomRef} className="chat-viewport space-y-3">
         {messages.length === 0 && (
           <div className="chat-welcome">
-            <div className="welcome-mark" aria-hidden="true">
-              <span>se</span>
-              <i />
-              <b />
-            </div>
             <h2>
-              Hey {name},<br />
-              what can we sort out?
+              What do you need help with?
             </h2>
             <p>Pick a starting point, or ask me anything about your order.</p>
             <div className="chat-actions">
@@ -187,15 +174,6 @@ export default function AgentChat({
                   onClick={() => send(action.prompt)}
                   className={"chat-action action-" + action.style}
                 >
-                  <span className="action-symbol" aria-hidden="true">
-                    {action.style === "track"
-                      ? "↗"
-                      : action.style === "return"
-                        ? "↶"
-                        : action.style === "cancel"
-                          ? "×"
-                          : "…"}
-                  </span>
                   <span>
                     <strong>{action.title}</strong>
                     <small>{action.description}</small>
